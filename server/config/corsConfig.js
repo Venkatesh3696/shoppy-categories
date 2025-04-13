@@ -1,6 +1,6 @@
 const allowedOrifins = [
   "http://localhost:5173",
-  "https://revisit-technologies.com",
+  "https://shoppy-categories.onrender.com",
 ];
 
 export const corsOptions = {
