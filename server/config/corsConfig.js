@@ -1,6 +1,6 @@
 const allowedOrifins = [
   "http://localhost:5173",
-  "https://shoppy-categories.onrender.com",
+  "https://shoppy-categories-frontend.onrender.com",
 ];
 
 export const corsOptions = {
