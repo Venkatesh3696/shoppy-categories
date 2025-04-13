@@ -66,6 +66,11 @@ This project is a simple web application with a backend and frontend. Below is a
    - Navigate to the frontend folder.
    - Install dependencies: `npm install`.
    - Start the development server: `npm start`.
+   -
+3. **Sample credentials**:
+   - email : user1@gmail.com
+   - password : 123456
+   - you can use theese credentials to use application or you can register too
 
 ---
 
