@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { signupUser } from "../../api/requests/register";
 import { useNavigate } from "react-router-dom";
 import API from "../../api/axios";
 

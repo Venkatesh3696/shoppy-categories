@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
 import API from "../../api/axios";
@@ -8,7 +8,8 @@ const Login = () => {
     email: "",
     password: "",
   });
-  const { login } = useAuth();
+  const navigate = useNavigate();
+  const { isAuthenticated, login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,21 +18,26 @@ const Login = () => {
       [name]: value,
     }));
   };
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await API.post("/api/users/login", loginForm);
-
-      if (data.status === 200) {
-        console.log("login success:", data);
+      const response = await login(loginForm);
+      console.log("login success:", response);
+      if (response.status === 200) {
+        console.log("ok anta");
         navigate("/");
       }
     } catch (error) {
       console.error("login failed:", error.response?.data || error.message);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [navigate, isAuthenticated]);
 
   return (
     <div className="w-full h-screen flex justify-center items-center bg-gray-100 p-5">

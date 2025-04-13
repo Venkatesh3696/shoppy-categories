@@ -5,6 +5,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AddCategory from "./pages/AddCategory";
 import Category from "./pages/shop/Category";
 import Home from "./pages/Home";
+import PageNotFound from "./pages/PageNotFound";
+import EditCategory from "./pages/shop/EditCategory";
 
 function App() {
   return (
@@ -39,6 +41,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/edit-category/:id"
+          element={
+            <ProtectedRoute>
+              <EditCategory />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Router>
   );

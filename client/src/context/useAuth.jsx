@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import API from "../api/axios";
-import { loginUser } from "../api/requests/login";
 
 const AuthContext = createContext();
 
@@ -10,11 +9,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await loginUser(credentials);
-      setIsAuthenticated(true);
-      setUser(response.user);
-      localStorage.setItem("user", JSON.stringify(response.user));
-      return response;
+      const response = await API.post("/api/users/login", credentials);
+      if (response.status === 200) {
+        console.log("after login user response ", response);
+        setUser(response.data.user);
+      }
     } catch (error) {
       console.error("Login failed:", error);
       setIsAuthenticated(false);
@@ -26,8 +25,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await API.post("/users/logout", {}, { withCredentials: true });
-      setIsAuthenticated(false);
+      await API.post("/api/users/logout", {});
       setUser(null);
       localStorage.removeItem("user");
     } catch (error) {
@@ -35,39 +33,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-          setIsAuthenticated(true);
-          setUser(JSON.parse(storedUser));
-        } else {
-          const response = await API.get("/api/users/check-user", {
-            withCredentials: true,
-          });
-          if (response.status === 200) {
-            setIsAuthenticated(true);
-            setUser(response.data.user);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
-          } else {
-            setIsAuthenticated(false);
-            setUser(null);
-          }
-        }
-      } catch (error) {
-        console.error(
-          "Authentication check failed:",
-          error.response?.data || error.message
-        );
-        setIsAuthenticated(false);
-        setUser(null);
-        localStorage.removeItem("user");
-      }
-    };
+  console.log("checking auth", user);
 
-    checkAuth();
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+      setIsAuthenticated(true);
+    } else {
+      localStorage.removeItem("user");
+      setIsAuthenticated(false);
+    }
+  }, [user]);
 
   const contextValue = useMemo(
     () => ({ isAuthenticated, user, login, logout }),

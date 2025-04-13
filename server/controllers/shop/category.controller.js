@@ -43,3 +43,23 @@ export const getCategories = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+export const getCategoryById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const categories = await Category.findById(id);
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updateCategories = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const categories = await Category.findById(id);
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
