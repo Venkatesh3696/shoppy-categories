@@ -1,7 +1,11 @@
 import axios from "axios";
 
+const url =
+  process.env.NODE_ENV === "production"
+    ? "https://shoppy-categories.onrender.com"
+    : "http://localhost:5000/";
 export const API = axios.create({
-  baseURL: "http://localhost:5000/",
+  baseURL: url,
   withCredentials: true,
 });
 
