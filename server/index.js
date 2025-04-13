@@ -15,7 +15,6 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
-app.options("*", cors(corsOptions));
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
 
