@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { signupUser } from "../../api/requests/register";
 import { useNavigate } from "react-router-dom";
+import API from "../../api/axios";
 
 const Signup = () => {
   const [loginForm, setLoginForm] = useState({
@@ -21,7 +22,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await signupUser(loginForm);
+      const data = await API.post("/api/users/signup", loginForm);
       if (data.success) {
         console.log("signup success:", data);
         navigate("/login");

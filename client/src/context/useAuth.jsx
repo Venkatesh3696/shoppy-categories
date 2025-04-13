@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import API from "../api/axios";
 import { loginUser } from "../api/requests/login";
 
@@ -7,13 +7,10 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [user, setUser] = useState(null);
-  console.log(JSON.stringify(user, null, 2), "user in auth context");
-  console.log(isAuthenticated, "isAuthenticated in auth context");
 
   const login = async (credentials) => {
     try {
       const response = await loginUser(credentials);
-      console.log(response, "response in auth context");
       setIsAuthenticated(true);
       setUser(response.user);
       localStorage.setItem("user", JSON.stringify(response.user));
@@ -23,7 +20,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(false);
       setUser(null);
       localStorage.removeItem("user");
-      return { success: false, error: error.response || error.message };
+      return { success: false, error: error.response?.data || error.message };
     }
   };
 
@@ -46,17 +43,17 @@ export const AuthProvider = ({ children }) => {
           setIsAuthenticated(true);
           setUser(JSON.parse(storedUser));
         } else {
-          const response = await API.get("/api/users/check-user");
+          const response = await API.get("/api/users/check-user", {
+            withCredentials: true,
+          });
           if (response.status === 200) {
             setIsAuthenticated(true);
             setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
           } else {
             setIsAuthenticated(false);
             setUser(null);
           }
-        }
-        if (isAuthenticated) {
-          navigate;
         }
       } catch (error) {
         console.error(
@@ -65,16 +62,20 @@ export const AuthProvider = ({ children }) => {
         );
         setIsAuthenticated(false);
         setUser(null);
+        localStorage.removeItem("user");
       }
     };
 
     checkAuth();
   }, []);
 
+  const contextValue = useMemo(
+    () => ({ isAuthenticated, user, login, logout }),
+    [isAuthenticated, user]
+  );
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
 

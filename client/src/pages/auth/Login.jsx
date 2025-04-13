@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
+import API from "../../api/axios";
 
 const Login = () => {
   const [loginForm, setLoginForm] = useState({
@@ -21,7 +22,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await login(loginForm);
+      const data = await API.post("/api/users/login", loginForm);
 
       if (data.status === 200) {
         console.log("login success:", data);
